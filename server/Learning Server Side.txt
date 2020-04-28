@@ -1,0 +1,150 @@
+
+
+Packages:::
+
+express              //Create Server
+express-graphql		//for Connect express with grapgql
+graphql				//use grapgql functionality
+
+const grapgqlHTTP = require('express-graphql');
+
+have aapde grapgqlHTTP chhe eene as a middleware use karsu etle ee na mate aapde lakhsu::;
+
+app.use('/grapgql',grapgqlHTTP({}));
+
+have aapde run karsu server eema aapde http://localhost:port/grapgql lakhsu etle grapgql endpoint per middleware run thase..and tya error msg lakhelo aavse bcz aapde haji koi Schema define nathi kayo etle
+
+{
+	"error":[
+			
+		{	
+			"message":"GraphQL: middleware options must contains aSchema.";
+		}
+		
+		]
+}
+
+ have aapde schema define karva mate Schema define karvu padse and ee define karva mate aapde
+ 
+ const {} = require('grapgql'); no use karsu and eema Schema crate karva mate GraphQLSchema tool no use karsu.
+ 
+  const {GraphQLSchema} = require('grapgql'); //aamathi aapde schema banavsu.
+  
+  const schema = new GraphQLSchema({});  //aama aapde GraphQLSchema no object type banavi ne schema create karsu.
+  
+  ==>1 . have grapgqlHTTP({}))  Object ma schema( aapde je GraphQLSchema no use kari ne je object banavyo("schema") ee aama lakhsu ) and graphiql:true kari nakhsu....... etle aapde as client side grapgql no use kari saksu ......
+  
+  ===>2. graphiql ee as a client side testing tool chhe eene aapde true karsu etle eene aapde /grapgql end point per access kari saksu.
+  
+  
+  
+  
+  --------------------------------------------------------------------------------------------------
+app.use('/grapgql',grapgqlHTTP({
+
+	schema,
+	graphiql:true,
+	
+	}));
+
+
+==>have aapde run karsu etle graphiql client side per run thase but eema haji aapde schema ma query ne ee badhu define nathi karyu etle error batavse.....
+
+{
+	"error":[
+	
+			{
+			
+				"message":"Query root type must be provided"
+			}
+		]
+		
+	
+}
+ 
+
+ have aapde ek data use kariye users name no....
+ 
+ const users = [
+ 
+		{id:1,name:"Imran Qasim", age:"40"},
+		{id:2,name:"Irfan Qasim", age:"38"},
+		{id:3,name:"Kamran Khan", age:"32"},
+		{id:4,name:"Muhammad Asif", age:"36"},
+		
+		
+		];
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+have grapgql ma 2 main chhe type and query==>
+
+to have aapde users mate type banavsu.. ee mate aapde grapgql mq GraphQLObjectType import karsu and eeno object banavsu.
+
+const {GraphQLSchema , GraphQLObjectType} = require('grapgql');
+
+
+const UserType = new GraphQLObjectType({});  //aa ek object type define thase bcz aapde object type na data jota che.
+
+have je aapde GraphQLObjectType no UserType object banavyo eene aapde GraphQLSchema ma ma nakhsu ee mate aapde ===>
+
+name:
+description:
+fields:
+
+aapde name aapi desu "Query" and description aapi desu "blah blah" pachhi fields nakhsu ...fields ee ek method chhe hoy chhe je aapdne 1 object return karse...
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+const express = require('express');
+const grapgqlHTTP = require('express-graphql');
+const {GraphQLSchema , GraphQLObjectType,GraphQLList,GraphQLInt,GraphQLString} = require('grapgql');
+const app = express();
+
+
+
+ const users = [
+ 
+		{id:1,name:"Imran Qasim", age:"40"},
+		{id:2,name:"Irfan Qasim", age:"38"},
+		{id:3,name:"Kamran Khan", age:"32"},
+		{id:4,name:"Muhammad Asif", age:"36"},
+		
+		
+		];
+		
+const UserType = new GraphQLObjectType({
+
+		name:'Users',
+		description:'......',
+		fields:{
+			
+			id:{
+				type:GraphQLInt
+			},
+			name:{
+				type:GraphQLString
+				},
+			age:{
+				type:GraphQLString
+				}
+		);
+const schema = new GraphQLSchema({
+
+			query:new GraphQLObjectType({
+			
+			name:"Query",
+			
+			description:".........",
+			fields:()=>({
+					
+					users:{
+					type:new GraphQLList(UserType)   //aapde je GraphQLObjectType banavyo ee
+					resolve:(parent,args)=>{
+					
+								return users
+									},
+							},
+							}),
+			
+						}),	
+					});
